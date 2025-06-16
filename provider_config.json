@@ -1,0 +1,141 @@
+{
+    "providers": {
+      "anthropic": {
+        "enabled": true,
+        "models": {
+          "opus": {
+            "id": "anthropic.claude-3-opus-20240229-v1:0",
+            "cost_per_1k_tokens": 0.015,
+            "min_complexity": 8
+          },
+          "sonnet": {
+            "id": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "cost_per_1k_tokens": 0.003,
+            "min_complexity": 6
+          },
+          "haiku": {
+            "id": "anthropic.claude-3-haiku-20240307-v1:0",
+            "cost_per_1k_tokens": 0.00025,
+            "min_complexity": 0
+          }
+        },
+        "avg_latency_seconds": 2.5,
+        "strengths": ["code_generation", "creative_writing", "complex_analysis", "translation"]
+      },
+      "meta": {
+        "enabled": true,
+        "models": {
+          "llama3-70b": {
+            "id": "meta.llama3-70b-instruct-v1:0",
+            "cost_per_1k_tokens": 0.00265,
+            "min_complexity": 6
+          },
+          "llama3-8b": {
+            "id": "meta.llama3-8b-instruct-v1:0",
+            "cost_per_1k_tokens": 0.0003,
+            "min_complexity": 0
+          }
+        },
+        "avg_latency_seconds": 1.8,
+        "strengths": ["code_generation", "creative_writing", "general_qa"]
+      },
+      "cohere": {
+        "enabled": true,
+        "models": {
+          "command": {
+            "id": "cohere.command-text-v14",
+            "cost_per_1k_tokens": 0.0015,
+            "min_complexity": 5
+          },
+          "command-light": {
+            "id": "cohere.command-light-text-v14",
+            "cost_per_1k_tokens": 0.0003,
+            "min_complexity": 0
+          }
+        },
+        "avg_latency_seconds": 1.2,
+        "strengths": ["summarization", "text_analysis", "general_qa"]
+      },
+      "ai21": {
+        "enabled": true,
+        "models": {
+          "j2-ultra": {
+            "id": "ai21.j2-ultra-v1",
+            "cost_per_1k_tokens": 0.0188,
+            "min_complexity": 6
+          },
+          "j2-mid": {
+            "id": "ai21.j2-mid-v1",
+            "cost_per_1k_tokens": 0.0125,
+            "min_complexity": 0
+          }
+        },
+        "avg_latency_seconds": 2.1,
+        "strengths": ["creative_writing", "general_qa"]
+      },
+      "titan": {
+        "enabled": true,
+        "models": {
+          "express": {
+            "id": "amazon.titan-text-express-v1",
+            "cost_per_1k_tokens": 0.0008,
+            "min_complexity": 3
+          },
+          "lite": {
+            "id": "amazon.titan-text-lite-v1",
+            "cost_per_1k_tokens": 0.00015,
+            "min_complexity": 0
+          }
+        },
+        "avg_latency_seconds": 1.0,
+        "strengths": ["summarization", "simple_qa", "text_analysis"]
+      }
+    },
+    "routing_rules": {
+      "task_preferences": {
+        "code_generation": {
+          "primary": "anthropic",
+          "fallback": ["meta", "cohere"]
+        },
+        "creative_writing": {
+          "primary": "anthropic",
+          "fallback": ["meta", "ai21"]
+        },
+        "text_analysis": {
+          "primary": "cohere",
+          "fallback": ["anthropic", "titan"]
+        },
+        "summarization": {
+          "primary": "titan",
+          "fallback": ["cohere", "anthropic"]
+        },
+        "translation": {
+          "primary": "anthropic",
+          "fallback": ["meta"]
+        },
+        "question_answering": {
+          "primary": "anthropic",
+          "fallback": ["meta", "cohere", "titan"]
+        }
+      },
+      "complexity_thresholds": {
+        "simple": {
+          "max_score": 3,
+          "preferred_providers": ["titan", "cohere"]
+        },
+        "moderate": {
+          "max_score": 6,
+          "preferred_providers": ["cohere", "meta", "anthropic"]
+        },
+        "complex": {
+          "max_score": 10,
+          "preferred_providers": ["anthropic", "meta"]
+        }
+      }
+    },
+    "performance_targets": {
+      "max_latency_seconds": 10,
+      "max_retries": 3,
+      "timeout_seconds": 30
+    }
+  }
